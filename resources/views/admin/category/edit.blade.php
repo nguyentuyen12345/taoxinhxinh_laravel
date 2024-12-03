@@ -16,6 +16,7 @@
 
 <section class="content">
     <div class="container-fluid">
+
         <form action="{{ route('categories.store') }}" method="post" id="categoryForm" name="categoryForm">
             <div class="card">
                 <div class="card-body">
@@ -27,8 +28,6 @@
                                 <p></p>
                             </div>
                         </div>
-
-
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Slug</label>
