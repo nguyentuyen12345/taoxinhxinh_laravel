@@ -73,6 +73,7 @@
                 <button type="submit" class="btn btn-primary" >Update</button>
                 <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
+            </form>
         </form>
     </div>
 </section>
@@ -101,7 +102,7 @@
         var element = $(this);
         $("button[type=submit]").prop('disabled',true);
         $.ajax({
-                    url: '{{ route("categories.update",$category->id) }}',
+                    url: '{{ route("categories.delete",$category->id) }}',
                     type: 'put',
                     data: element.serializeArray(),
                     dataType: 'json',

@@ -221,29 +221,3 @@ class CategoryController extends Controller
         }
     }
 }
-
-
-// public function destroy($categoryId, Request $request)
-//     {
-//         // Tìm danh mục theo ID
-//         $category = Category::find($categoryId);
-//         if (empty($category)) {
-//             return redirect()->route('categories.index'); // Redirect nếu không tìm thấy danh mục
-//         }
-
-//         // Xóa hình ảnh liên quan đến danh mục
-//         File::delete(public_path() . '/uploads/category/thumb/' . $category->image);
-//         File::delete(public_path() . '/uploads/category/' . $category->image);
-
-//         // Xóa danh mục khỏi cơ sở dữ liệu
-//         $category->delete();
-
-//         // Flash thông báo thành công
-//         $request->flash('success', 'Đã xóa danh mục thành công ');
-
-//         // Trả về phản hồi JSON
-//         return response()->json([
-//             'status' => true,
-//             'message' => 'Đã xóa danh mục thành công '
-//         ]);
-//     }//ĐOẠN NÀY CỦA CHAT XÓA
