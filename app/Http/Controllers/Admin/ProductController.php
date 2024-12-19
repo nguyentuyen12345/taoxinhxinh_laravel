@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\TempImage;
+use App\Services\FileUploadService;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
@@ -44,80 +47,151 @@ class ProductController extends Controller
     }
     public function store(Request $request)
     {
+
         $rules = [
             'title' => 'required',
             'slug' => 'required|unique:products,slug',
             'price' => 'required|numeric',
-            'sku' => 'required|unique:products,sku',
+            'barcode' => 'required|unique:products,barcode',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:Yes,No',
         ];
 
         $validator = Validator::make($request->all(), $rules);
+
         if ($validator->passes()) {
-            $product = $request->id ? Product::findOrFail($request->id) : new Product;
-            // Lưu thông tin sản phẩm
-            $product->title = $request->title;
-            $product->slug = $request->slug;
-            $product->description = $request->description;
-            $product->price = $request->price;
-            $product->compare_price = $request->compare_price;
-            $product->sku = $request->sku;
-            $product->barcode = $request->barcode;
-            $product->status = $request->status;
-            $product->category_id = $request->category;
-            $product->is_featured = $request->is_featured;
+            // $product = $request->id ? Product::findOrFail($request->id) : new Product;
+            // // Lưu thông tin sản phẩm
+            // $product->title = $request->title;
+            // $product->slug = $request->slug;
+            // $product->description = $request->description;
+            // $product->price = $request->price;
+            // $product->compare_price = $request->compare_price;
+            // $product->sku = $request->sku;
+            // $product->barcode = $request->barcode;
+            // $product->status = $request->status;
+            // $product->category_id = $request->category;
+            // $product->is_featured = $request->is_featured;
 
-            $product->save();
+            // $product->save();
 
-            if (!empty($request->image_array)) {
-                foreach ($request->image_array as $temp_image_id) {
-                    $tempImageInfo = TempImage::find($temp_image_id);
-                    if (!$tempImageInfo) {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Temp image not found with ID: ' . $temp_image_id
-                        ]);
-                    }
+            //Upload file
+            $fileUpload = new FileUploadService();
 
-                    $productImage = new ProductImage();
-                    $productImage->product_id = $product->id;
+            $imageRollback = [];
+            $imageRollbackThumbnail = [];
+            try {
+                DB::beginTransaction();
+                //Create Product
+                $product = Product::create([
+                    'title' => $request->title,
+                    'slug' => $request->slug,
+                    'description' => $request->description,
+                    'price' => $request->price,
+                    'compare_price' => $request->compare_price,
+                    'sku' => $request->sku,
+                    'barcode' => $request->barcode,
+                    'status' => $request->status,
+                    'category_id' => $request->category,
+                    'is_featured' => $request->is_featured,
+                ]);
 
-                    $extArray = explode('.', $tempImageInfo->name);
-                    $ext = last($extArray);
-                    $imageName = $product->id . '-' . $productImage->id . '-' . time() . '.' . $ext;
 
-                    $productImage->image = $imageName;
-                    $productImage->save();
 
-                    $sourcePath = public_path() . '/temp/' . $tempImageInfo->name;
-                    $dPath = public_path() . '/uploads/product/' . $imageName;
 
-                    if (!file_exists(public_path('/uploads/product/'))) {
-                        mkdir(public_path('/uploads/product/'), 0755, true);
-                    }
+                $images = $request->file('images');
 
-                    if (file_exists($sourcePath)) {
-                        if (!File::copy($sourcePath, $dPath)) {
-                            return response()->json([
-                                'status' => false,
-                                'message' => 'Error copying image.'
+
+                if (!empty($images)) {
+                    $sortOrder = 1;
+                    foreach ($images as $image) {
+                        $upload = $fileUpload->uploadFile($image, 'products');
+
+                        if (!empty($upload)) {
+                            ProductImage::create([
+                                'product_id' => $product->id,
+                                'image' => $upload['file_path'],
+                                'sort_order' => $sortOrder,
+                                'thumbnail' => $upload['file_path_thumbnail']
                             ]);
+                            $imageRollback[] = $upload['file_path'];
+                            $imageRollbackThumbnail[] = $upload['file_path_thumbnail'];
+                            $sortOrder++;
                         }
-                    } else {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Source image not found.'
-                        ]);
                     }
                 }
+
+                DB::commit();
+                session()->flash('success', 'Product added or updated successfully');
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Product added or updated successfully'
+                ]);
+            } catch (Exception $e) {
+                DB::rollBack();
+                foreach ($imageRollback as $image) {
+                    $delete = $fileUpload->deleteFile($image);
+                }
+                foreach ($imageRollbackThumbnail as $image) {
+                    $delete = $fileUpload->deleteFile($image);
+                }
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Error'
+                ]);
             }
 
-            session()->flash('success', 'Product added or updated successfully');
-            return response()->json([
-                'status' => true,
-                'message' => 'Product added or updated successfully'
-            ]);
+
+
+            // if (!empty($request->image_array)) {
+            //     foreach ($request->image_array as $temp_image_id) {
+            //         $tempImageInfo = TempImage::find($temp_image_id);
+            //         if (!$tempImageInfo) {
+            //             return response()->json([
+            //                 'status' => false,
+            //                 'message' => 'Temp image not found with ID: ' . $temp_image_id
+            //             ]);
+            //         }
+
+            //         $productImage = new ProductImage();
+            //         $productImage->product_id = $product->id;
+
+            //         $extArray = explode('.', $tempImageInfo->name);
+            //         $ext = last($extArray);
+            //         $imageName = $product->id . '-' . $productImage->id . '-' . time() . '.' . $ext;
+
+            //         $productImage->image = $imageName;
+            //         $productImage->save();
+
+            //         $sourcePath = public_path() . '/temp/' . $tempImageInfo->name;
+            //         $dPath = public_path() . '/uploads/product/' . $imageName;
+
+            //         if (!file_exists(public_path('/uploads/product/'))) {
+            //             mkdir(public_path('/uploads/product/'), 0755, true);
+            //         }
+
+            //         if (file_exists($sourcePath)) {
+            //             if (!File::copy($sourcePath, $dPath)) {
+            //                 return response()->json([
+            //                     'status' => false,
+            //                     'message' => 'Error copying image.'
+            //                 ]);
+            //             }
+            //         } else {
+            //             return response()->json([
+            //                 'status' => false,
+            //                 'message' => 'Source image not found.'
+            //             ]);
+            //         }
+            //     }
+            // }
+
+            // session()->flash('success', 'Product added or updated successfully');
+            // return response()->json([
+            //     'status' => true,
+            //     'message' => 'Product added or updated successfully'
+            // ]);
         } else {
             return response()->json([
                 'status' => false,

@@ -17,10 +17,14 @@ class Product extends Model
     //     'category_id',
     //     'qty'
     // ];
-
     use HasFactory;
+
+    protected $table = 'products';
+
+    protected $guarded  = [];
+
     public function product_images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
 }
