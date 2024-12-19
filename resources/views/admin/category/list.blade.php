@@ -6,10 +6,10 @@
 					<div class="container-fluid my-2">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1>Categories</h1>
+								<h1>Danh mục sản phẩm</h1>
 							</div>
 							<div class="col-sm-6 text-right">
-								<a href="{{ route('categories.create') }}" class="btn btn-primary">New Category</a>
+								<a href="{{ route('categories.create') }}" class="btn btn-primary">Tạo danh mục mới</a>
 							</div>
 						</div>
 					</div>
@@ -24,13 +24,13 @@
                     <form action="" method="get">
 							<div class="card-header">
                                 <div class="card-title">
-                             <button type="button" onclick="window.location.href='{{ route('categories.index') }}'" class="btn btn-default btn-sm">Reset</button>
+                             <button type="button" onclick="window.location.href='{{ route('categories.index') }}'" class="btn btn-default btn-sm">Tải lại</button>
 
                                 </div>
                             <div class="card-tools">
 							<div class="input-group input-group" style="width: 250px;">
 							<input value="{{ Request::get('keyword')  }}" type="text" name="keyword" class="form-control float-right"
-                            placeholder="Search">
+                            placeholder="Tìm kiếm ">
 
 
                             <div class="input-group-append">
@@ -42,16 +42,16 @@
                         </div>
 
 					</div>
-                              </form>
+                </form>
 							<div class="card-body table-responsive p-0">
 								<table class="table table-hover text-nowrap">
 									<thead>
 										<tr>
 											<th width="60">ID</th>
-											<th>Name</th>
+											<th>Tên</th>
 											<th>Slug</th>
-											<th width="100">Status</th>
-											<th width="100">Action</th>
+											<th width="100">Trạng thái</th>
+											<th width="100">Hoạt động</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -93,7 +93,7 @@
                                  @else
 
                                         <tr>
-                                            <td colspan="5">Records Not Found</td>
+                                            <td colspan="5">Không tìm thấy hồ sơ</td>
                                         </tr>
                                         @endif
 

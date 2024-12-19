@@ -2,9 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+        <!-- Bootstrap 5 -->
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Laravel Shop :: Administrative Panel</title>
+		<title> Shop :: Trang quản trị </title>
 		<!-- Google Font: Source Sans Pro -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 		<!-- Font Awesome -->
@@ -14,7 +21,10 @@
 
 
 		<link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
-        <link rel="stylesheet" href="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css') }}">
+
+         {{-- <link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css') }}"> --}}
+         <link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summerbote.min.css') }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
 	</head>
@@ -97,6 +107,10 @@
 		<!-- AdminLTE App -->
 		<script src="{{ asset('admin-assets/js/adminlte.min.js') }}"></script>
         <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js') }}"></script>
+{{--
+        <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js') }}"></script> --}}
+        <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js') }}"></script>
+
         {{-- <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js') }}"></script> --}}
 
 		<!-- AdminLTE for demo purposes -->
@@ -109,6 +123,12 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
             });
+            $(document).ready(function(){
+                $(".summernote").summernote({
+                    height:250
+                });
+            });
+
                 // $.post('/category/store', {
                 // name: 'Category Name',
                 // slug: 'category-slug'

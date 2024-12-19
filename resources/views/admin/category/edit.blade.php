@@ -5,10 +5,10 @@
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Edit Category</h1>
+                <h1>Chỉnh sửa danh mục</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="{{ route('categories.index') }}" class="btn btn-primary">Back</a>
+                <a href="{{ route('categories.index') }}" class="btn btn-primary">Quay lại</a>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="name">Name</label>
+                                <label for="name">Tên</label>
                                 <input type="text" name="name" id="name" class="form-control" placeholder="Name" value="{{ $category->name }}">
                                 <p></p>
                             </div>
@@ -37,10 +37,19 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="status">Status</label>
+                                <label for="status">Trạng thái</label>
                                 <select name="status" id="status" class="form-control">
                                         <option {{ ($category->status == 1 ) ?'selected': '' }}value="1">Active</option>
                                         <option {{ ($category->status == 0 ) ?'selected': '' }}value="0">Block</option>
+                                </select>
+                            </div>
+                        </div>
+                         <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="showHome">Hiển thị trang chủ</label>
+                                <select name="showHome" id="showHome" class="form-control">
+                                    <option  {{ ($category->showHome == 'Yes' ) ?'selected': '' }} value="1">Có</option>
+                                    <option  {{ ($category->showHome == 'No' ) ?'selected': '' }} value="0">Không</option>
                                 </select>
                             </div>
                         </div>
@@ -49,7 +58,7 @@
                     <div class="col-md-6">
                 <div class="mb-3">
                     <input type="hidden" id="image_id" name="image_id" value="1">
-                    <label for="image">image</label>
+                    <label for="image">Hình</label>
                     <div id="image" class="dropzone dz-clickable">
                         <div class="dz-message needsclick">
                             <br>Bấm để tải tệp tin lên.<br><br>
@@ -70,8 +79,8 @@
              @csrf
             @method('PUT')
             <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-primary" >Update</button>
-                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
+                <button type="submit" class="btn btn-primary" >Cập nhật</button>
+                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark ml-3">Hủy</a>
             </div>
             </form>
         </form>

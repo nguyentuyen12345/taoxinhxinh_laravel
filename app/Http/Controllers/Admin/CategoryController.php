@@ -44,7 +44,7 @@ class CategoryController extends Controller
             $category = new Category();
             $category->name = $request->name;
             $category->slug = $request->slug;
-            $category->status = $request->status;
+            $category->showHome = $request->showHome;
             $category->save();
 
             //save Igmage here
@@ -127,7 +127,7 @@ class CategoryController extends Controller
         if ($validator->passes()) {
             $category->name = $request->name;
             $category->slug = $request->slug;
-            $category->status = $request->status;
+            $category->showHome = $request->showHome;
             $category->save();
 
             // Cập nhật ảnh nếu có
@@ -187,8 +187,6 @@ class CategoryController extends Controller
             ]);
         }
     }
-
-
 
     public function destroy($categoryId, Request $request)
     {

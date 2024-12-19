@@ -4,8 +4,10 @@ use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\HomeController;
-use App\Http\Controllers\admin\SubCategoryController;
+use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\ProductImageController;
 use App\Http\Controllers\admin\TempImagesController;
+use App\Http\Controllers\FrontController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -13,9 +15,11 @@ use Illuminate\Http\Request;
 
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
 Route::group(['prefix' => 'admin'], function () {
     // Đăng nhập admin
@@ -37,25 +41,22 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.delete');
 
-
-        //sub category routes
-        Route::get('/sub-categories', [SubCategoryController::class, 'index'])->name('sub-categories.index');
-
-        Route::get('/sub-categories/create', [SubCategoryController::class, 'create'])->name('sub-categories.create');
-        Route::post('sub-categories', [SubCategoryController::class, 'store'])->name('sub-categories.store');
-        Route::get('sub-categories{subCategory}/edit', [SubCategoryController::class, 'edit'])->name('sub-categories.edit');
-        Route::put('/sub-categories/{subCategory}', [SubCategoryController::class, 'update'])->name('sub-categories.update');
-        Route::delete('/sub-categories/{id}', [SubCategoryController::class, 'destroy'])->name('sub-categories.delete');
-
-        // Brands Routes
-        Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
-        Route::get('/brands/create', [BrandController::class, 'create'])->name('brands.create');
-        Route::post('/brands', [BrandController::class, 'store'])->name('brands.store');
-        Route::get('brands{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-        Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+        //Product Routes
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 
 
-        //temp-images.create
+        Route::post('/product-image/update', [ProductImageController::class, 'update'])->name('product-image.update');
+        // Route::post('/temp-images/create', [ProductImageController::class, 'store'])->name('temp-images.create');
+
+
+        Route::delete('/product-image', [CategoryController::class, 'destroy'])->name('product-image.destroy');
+
+
+        // temp-images.create
         Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
 
         Route::get('/getSlug', function (Request $request) {
